@@ -1,0 +1,11 @@
+{
+  "name": "gulp-webpack-markup",
+  "version": "1.0.0",
+  "description": "gulp webpack starter",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "aleksandr.guryanov@gmail.com",
+  "license": "ISC"
+}
