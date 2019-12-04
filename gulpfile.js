@@ -1,13 +1,9 @@
 "use strict";
-
-const gulp = require("gulp");
+const { src, dest, watch, series } = require('gulp');
 
 // util
-const browsersync = require("browser-sync").create();
+const browserSync = require('browser-sync').create()
 const rename = require("gulp-rename");
-const cp = require("child_process");
-const del = require("del");
-const plumber = require("gulp-plumber");
 
 // style
 const autoprefixer = require("autoprefixer");
@@ -20,24 +16,57 @@ const postcss = require("gulp-postcss");
 // images
 const imagemin = require("gulp-imagemin");
 
-// javascript 
+// javascript
 const eslint = require("gulp-eslint");
 
+// html
+const pug = require('gulp-pug');
 
-
+// patch
 var path = {
-    build: {
-        html: 'build',
-        js: 'build/js',
-        css: 'build/css',
-        img: 'build/img',
-        icons: 'build/img/icons',
-        fonts: 'build/fonts',
-    },
-    src: {
-        
-    },
-    watch: {
-
-    },
+  build: {
+    html: 'build',
+    js: 'build/js',
+    style: 'build/css',
+    img: 'build/img',
+    icons: 'build/img/icons',
+    fonts: 'build/fonts',
+    misc: 'build/'
+  },
+  src: {
+    html: 'src/*.pug, src/layout/**/',
+    js: 'src/common/js/main.js',
+    style: 'src/common/scss/*.scss',
+    img: 'src/common/assets/images/**/*.*',
+    icons: 'src/common/assets/icons/*.svg',
+    fonts: 'src/common/fonts/*.*',
+    misc: 'src/mics/*.*',
+  },
+  watch: {
+    html: 'build/*.html',
+  },
 }
+
+// Compile pug files into HTML
+function html() {
+  return src([path.src.html])
+    .pipe(pug({
+      pretty: true
+    }))
+    .pipe(dest(path.build.html))
+}
+
+// Serve and watch sass/pug files for changes
+function watchAndServe() {
+  browserSync.init({
+    server: 'build',
+  })
+
+  watch([path.src.html], html)
+  watch(path.watch.html).on('change', browserSync.reload)
+}
+
+exports.html = html;
+exports.watch = watchAndServe;
+
+exports.default = series(html, watchAndServe);

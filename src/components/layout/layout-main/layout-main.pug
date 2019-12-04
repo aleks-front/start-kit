@@ -1,0 +1,17 @@
+include ../../head/head.pug
+
+doctype html
+html(class="no-js", lang="ru")
+  +head(data)
+  body.page
+    div.page__wrapper
+      div.page__container
+        div.page__header
+          +header(data)
+        div.page__content
+          main.page__main
+            block main
+        div.page__footer
+          +footer(data)
+    block js
+      +foot(data)

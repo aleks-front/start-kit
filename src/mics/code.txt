@@ -1,0 +1,45 @@
+
+<!-- favicon standart-->
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon.ico">
+<link rel="shortcut icon" href="/icons/favicon.ico">
+<!-- favicon html5-->
+<link rel="icon" href="favicon.png" sizes="16x16" type="image/png">
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32" type="image/vnd.microsoft.icon">
+<link rel="icon" href="favicon.svg" sizes="any" type="image/svg+xml">
+<!-- favicon android-->
+<link rel="manifest" href="/icons/site.webmanifest">
+{
+  "name": "My App",
+  "icons": [{
+    "src": "64.png",
+    "sizes": "64x64"
+  }, {
+    "src": "192.png",
+    "sizes": "192x192"
+  }],
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "theme_color": "tomato",
+  "background_color": "cornflowerblue"
+}
+<!-- favicon apple-->
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="mask-icon" href="mask.svg" color="red">
+<link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#5bbad5">
+<!-- favicon Edge and IE 12-->
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="msapplication-config" content="/icons/browserconfig.xml">
+<browserconfig>
+<msapplication>
+<tile>
+<square70x70logo src="/mstile-70x70.png">
+<square150x150logo src="/mstile-150x150.png">
+<square310x310logo src="/mstile-310x310.png">
+<wide310x150logo src="/mstile-310x150.png">
+<tilecolor>#da532c</tilecolor>
+</wide310x150logo></square310x310logo></square150x150logo></square70x70logo></tile>
+</msapplication>
+</browserconfig>
+
+источник https://pr-cy.ru/news/p/7346-rukovodstvo-po-favikonu-dlya-sayta

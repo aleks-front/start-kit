@@ -1,0 +1,6 @@
+@mixin  footer($theme) {
+  .footer{
+    $_: '.footer';
+    color: inherit;
+  }
+}

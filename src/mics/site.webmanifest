@@ -1,0 +1,14 @@
+{
+  "name": "GWS",
+  "icons": [{
+    "src": "64.png",
+    "sizes": "64x64"
+  }, {
+    "src": "192.png",
+    "sizes": "192x192"
+  }],
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "theme_color": "tomato",
+  "background_color": "cornflowerblue"
+}
