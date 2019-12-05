@@ -71,6 +71,12 @@ function style() {
     .pipe(dest(path.build.style))
 }
 
+// Copy fonts files into fonts
+function fonts() {
+  return src(path.src.fonts)
+    .pipe(dest(path.build.fonts))
+}
+
 // Copy Misc files into build
 function misc() {
   return src(path.src.misc)
@@ -85,12 +91,14 @@ function watchAndServe() {
 
   watch(path.watch.html, html)
   watch(path.watch.style, style)
+  watch(path.watch.fonts, fonts)
   watch(path.watch.misc, misc)
   watch(path.build.html).on('change', browserSync.reload)
 }
 
 exports.html = html;
 exports.style = style;
+exports.fonts = fonts;
 exports.misc = misc;
 exports.watch = watchAndServe;
 
