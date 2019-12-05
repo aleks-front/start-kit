@@ -43,9 +43,9 @@ var path = {
     misc: './src/mics/*.*',
   },
   watch: {
-    html: './src/*.pug, ./src/layout/**/',
+    html: ['./src/*.pug', './src/layout/**/'],
     js: './src/common/js/main.js',
-    style: './src/common/scss/**/*.scss, ./src/common/scss/*.scss, ./src/components/**/*.scss, ./src/components/**/**/*.scss',
+    style: ['./src/common/scss/**/*.scss', './src/common/scss/*.scss', './src/components/**/*.scss', './src/components/**/**/*.scss'],
     img: './src/common/assets/images/**/*.*',
     icons: './src/common/assets/icons/*.svg',
     fonts: './src/common/fonts/*.*',
@@ -77,8 +77,8 @@ function watchAndServe() {
     server: './build',
   })
 
-  watch([path.watch.html], html)
-  watch([path.watch.style], style)
+  watch(path.watch.html, html)
+  watch(path.watch.style, style)
   watch(path.build.html).on('change', browserSync.reload)
 }
 
