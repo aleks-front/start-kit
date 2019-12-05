@@ -2,22 +2,25 @@
 const { src, dest, watch, series } = require('gulp');
 
 // util
-const browserSync = require('browser-sync').create()
-const rename = require("gulp-rename");
+const browserSync = require('browser-sync').create();
+const rename = require('gulp-rename');
+const sourcemaps = require('gulp-sourcemaps');
 
 // style
-const autoprefixer = require("autoprefixer");
-const sass = require("gulp-sass");
-const cssnano = require("cssnano");
-const postcss = require("gulp-postcss");
+const sass = require('gulp-sass');
+const autoprefixer = require('autoprefixer');
+const cssnano = require('cssnano');
+const postcss = require('gulp-postcss');
+const postcssInlineSvg = require('postcss-inline-svg');
+const postcssFlexbugsFixes = require('postcss-flexbugs-fixes')
 
 // icons
 
 // images
-const imagemin = require("gulp-imagemin");
+const imagemin = require('gulp-imagemin');
 
 // javascript
-const eslint = require("gulp-eslint");
+const eslint = require('gulp-eslint');
 
 // html
 const pug = require('gulp-pug');
@@ -53,6 +56,13 @@ var path = {
   },
 }
 
+var postCssPlugins = [
+  autoprefixer({browsers: ['last 3 version']}),
+  cssnano(),
+  postcssFlexbugsFixes(),
+  postcssInlineSvg()
+]
+
 // Compile pug files into HTML
 function html() {
   return src(path.src.html)
@@ -64,10 +74,17 @@ function html() {
 
 // Compile Scss files into Css
 function style() {
+
   return src(path.src.style)
+    .pipe(sourcemaps.init())
     .pipe(sass({
       pretty: true
+    }).on('error', function(err){
+      log.error(err.message);
     }))
+    .pipe(postcss(postCssPlugins))
+    .pipe(rename('main.min.css'))
+    .pipe(sourcemaps.write('.'))
     .pipe(dest(path.build.style))
 }
 
