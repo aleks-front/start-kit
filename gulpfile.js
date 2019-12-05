@@ -91,11 +91,27 @@ function style() {
     .pipe(dest(path.build.style))
 }
 
-// Copy images inot build
+// Copy ,and Optimize, images into build
 function images() {
   return src(path.src.img)
+    .pipe(
+      imagemin([
+        imagemin.gifsicle({ interlaced: true }),
+        imagemin.jpegtran({ progressive: true }),
+        imagemin.optipng({ optimizationLevel: 8 }),
+        imagemin.svgo({
+          plugins: [
+            {
+              removeViewBox: false,
+              collapseGroups: true
+            }
+          ]
+        })
+      ])
+    )
     .pipe(dest(path.build.img))
 }
+
 
 // Copy icons inot build
 function icons() {
@@ -138,7 +154,7 @@ function watchAndServe() {
 exports.html = html;
 exports.style = style;
 exports.fonts = fonts;
-exports.image = image;
+exports.images = images;
 exports.icons = icons;
 exports.misc = misc;
 exports.clean = clean;
