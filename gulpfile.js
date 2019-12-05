@@ -78,7 +78,6 @@ function html() {
 
 // Compile Scss files into Css
 function style() {
-
   return src(path.src.style)
     .pipe(sourcemaps.init())
     .pipe(sass({
@@ -90,6 +89,18 @@ function style() {
     .pipe(rename('main.min.css'))
     .pipe(sourcemaps.write('.'))
     .pipe(dest(path.build.style))
+}
+
+// Copy images inot build
+function images() {
+  return src(path.src.img)
+    .pipe(dest(path.build.img))
+}
+
+// Copy icons inot build
+function icons() {
+  return src(path.src.icons)
+    .pipe(dest(path.build.icons))
 }
 
 // Copy fonts files into fonts
@@ -104,6 +115,7 @@ function misc() {
     .pipe(dest(path.build.misc))
 }
 
+// Сlean build folder
 function clean(cb) {
   rimraf(path.build.html, cb);
 }
@@ -116,6 +128,8 @@ function watchAndServe() {
 
   watch(path.watch.html, html)
   watch(path.watch.style, style)
+  watch(path.watch.images, images)
+  watch(path.watch.icons, icons)
   watch(path.watch.fonts, fonts)
   watch(path.watch.misc, misc)
   watch(path.build.html).on('change', browserSync.reload)
@@ -124,9 +138,11 @@ function watchAndServe() {
 exports.html = html;
 exports.style = style;
 exports.fonts = fonts;
+exports.image = image;
+exports.icons = icons;
 exports.misc = misc;
 exports.clean = clean;
 exports.watch = watchAndServe;
 
-exports.default = series(html, style, misc, watchAndServe);
-exports.build = series(clean, html, style, misc);
+exports.default = series(html, style, images, icons, fonts, misc, watchAndServe);
+exports.build = series(clean, html, style, images, icons, fonts, misc);
