@@ -34,7 +34,7 @@ var path = {
     misc: './build/'
   },
   src: {
-    html: './src/*.pug, ./src/layout/**/',
+    html: './src/*.pug',
     js: './src/common/js/main.js',
     style: './src/common/scss/main.scss',
     img: './src/common/assets/images/**/*.*',
@@ -43,7 +43,7 @@ var path = {
     misc: './src/mics/*.*',
   },
   watch: {
-    html: ['./src/*.pug', './src/layout/**/'],
+    html: ['./src/*.pug', './src/components/**/*.pug', './src/components/**/**/*.pug'],
     js: './src/common/js/main.js',
     style: ['./src/common/scss/**/*.scss', './src/common/scss/*.scss', './src/components/**/*.scss', './src/components/**/**/*.scss'],
     img: './src/common/assets/images/**/*.*',

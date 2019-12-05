@@ -1,4 +1,7 @@
 include ../../head/head.pug
+include ../../foot/foot.pug
+include ../../header/header.pug
+include ../../footer/footer.pug
 
 doctype html
 html(class="no-js", lang="ru")
@@ -11,7 +14,8 @@ html(class="no-js", lang="ru")
         div.page__content
           main.page__main
             block main
+              p Lorem ipsum dolor sit amet consectetur adipisicing elit. Id magni alias ab! Eos autem labore ipsum incidunt excepturi magnam aperiam, odio, mollitia deleniti tempora atque fugiat unde eius. Explicabo sunt cum qui consequatur, maiores quam blanditiis vel facilis quis! Libero doloremque molestiae fugiat, nesciunt nulla minima beatae ea fuga maxime deleniti fugit, est harum voluptates obcaecati vel a quia aperiam praesentium perspiciatis animi, natus veritatis officiis iusto! Excepturi atque accusamus adipisci cumque, quo minus assumenda delectus optio aut nihil, ipsum aspernatur aperiam perspiciatis nisi impedit velit odio obcaecati expedita. Cumque assumenda facere cupiditate cum porro minus recusandae exercitationem reiciendis officia.
         div.page__footer
           +footer(data)
-    block js
-      +foot(data)
+
+    +foot(data)
