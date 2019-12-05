@@ -13,7 +13,9 @@ const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
 const postcss = require('gulp-postcss');
 const postcssInlineSvg = require('postcss-inline-svg');
-const postcssFlexbugsFixes = require('postcss-flexbugs-fixes')
+const postcssFlexbugsFixes = require('postcss-flexbugs-fixes');
+const postcssNormalize = require('postcss-normalize');
+
 
 // icons
 
@@ -61,7 +63,8 @@ var postCssPlugins = [
   autoprefixer(),
   cssnano(),
   postcssFlexbugsFixes(),
-  postcssInlineSvg()
+  postcssInlineSvg(),
+  postcssNormalize()
 ]
 
 // Compile pug files into HTML

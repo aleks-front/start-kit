@@ -23,9 +23,11 @@
     "gulp-sourcemaps": "^2.6.5",
     "postcss-flexbugs-fixes": "^4.1.0",
     "postcss-inline-svg": "^4.1.0",
+    "postcss-normalize": "^8.0.1",
     "rimraf": "^3.0.0"
   },
   "dependencies": {
     "bootstrap": "^4.4.1"
-  }
+  },
+  "browserslist": "last 2 versions"
 }
