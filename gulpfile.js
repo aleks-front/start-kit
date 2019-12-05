@@ -5,6 +5,7 @@ const { src, dest, watch, series } = require('gulp');
 const browserSync = require('browser-sync').create();
 const rename = require('gulp-rename');
 const sourcemaps = require('gulp-sourcemaps');
+const rimraf = require('rimraf');
 
 // style
 const sass = require('gulp-sass');
@@ -57,7 +58,7 @@ var path = {
 }
 
 var postCssPlugins = [
-  autoprefixer({browsers: ['last 3 version']}),
+  autoprefixer(),
   cssnano(),
   postcssFlexbugsFixes(),
   postcssInlineSvg()
@@ -100,6 +101,10 @@ function misc() {
     .pipe(dest(path.build.misc))
 }
 
+function clean(cb) {
+  rimraf(path.build.html, cb);
+}
+
 // Serve and watch sass/pug files for changes
 function watchAndServe() {
   browserSync.init({
@@ -117,6 +122,8 @@ exports.html = html;
 exports.style = style;
 exports.fonts = fonts;
 exports.misc = misc;
+exports.clean = clean;
 exports.watch = watchAndServe;
 
 exports.default = series(html, style, misc, watchAndServe);
+exports.build = series(clean, html, style, misc);
