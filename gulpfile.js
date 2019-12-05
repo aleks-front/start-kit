@@ -55,20 +55,26 @@ var path = {
 
 // Compile pug files into HTML
 function html() {
-  return src([path.src.html])
+  return src(path.src.html)
     .pipe(pug({
       pretty: true
     }))
     .pipe(dest(path.build.html))
 }
 
-// Compile pug files into HTML
+// Compile Scss files into Css
 function style() {
-  return src([path.src.style])
+  return src(path.src.style)
     .pipe(sass({
       pretty: true
     }))
     .pipe(dest(path.build.style))
+}
+
+// Copy Misc files into build
+function misc() {
+  return src(path.src.misc)
+    .pipe(dest(path.build.misc))
 }
 
 // Serve and watch sass/pug files for changes
@@ -79,11 +85,13 @@ function watchAndServe() {
 
   watch(path.watch.html, html)
   watch(path.watch.style, style)
+  watch(path.watch.misc, misc)
   watch(path.build.html).on('change', browserSync.reload)
 }
 
 exports.html = html;
 exports.style = style;
+exports.misc = misc;
 exports.watch = watchAndServe;
 
-exports.default = series(html, style, watchAndServe);
+exports.default = series(html, style, misc, watchAndServe);

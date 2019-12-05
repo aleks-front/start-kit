@@ -1,10 +1,10 @@
 {
   "name": "GWS",
   "icons": [{
-    "src": "64.png",
+    "src": "favicon/64.png",
     "sizes": "64x64"
   }, {
-    "src": "192.png",
+    "src": "favicon/192.png",
     "sizes": "192x192"
   }],
   "display": "fullscreen",
