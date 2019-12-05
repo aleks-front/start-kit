@@ -6,6 +6,7 @@ const browserSync = require('browser-sync').create();
 const rename = require('gulp-rename');
 const sourcemaps = require('gulp-sourcemaps');
 const rimraf = require('rimraf');
+const replace = require('gulp-replace');
 
 // style
 const sass = require('gulp-sass');
@@ -18,6 +19,9 @@ const postcssNormalize = require('postcss-normalize');
 
 
 // icons
+const svgmin = require('gulp-svgmin');
+const svgSprite = require('gulp-svg-sprite');
+const cheerio = require('gulp-cheerio');
 
 // images
 const imagemin = require('gulp-imagemin');
@@ -34,8 +38,8 @@ var path = {
     html: './build',
     js: './build/js',
     style: './build/css',
-    img: './build/img',
-    icons: './build/img/icons',
+    img: './build/images',
+    icons: './build/images/icons',
     fonts: './build/fonts',
     misc: './build/'
   },
@@ -116,6 +120,31 @@ function images() {
 // Copy icons inot build
 function icons() {
   return src(path.src.icons)
+    // minify svg
+    .pipe(svgmin({
+        js2svg: {
+            pretty: true
+        }
+    }))
+    // remove all fill, style and stroke declarations in out shapes
+    .pipe(cheerio({
+        run: function ($) {
+            $('[fill]').removeAttr('fill');
+            $('[stroke]').removeAttr('stroke');
+            $('[style]').removeAttr('style');
+        },
+        parserOptions: {xmlMode: true}
+    }))
+    // cheerio plugin create unnecessary string '&gt;', so replace it.
+    .pipe(replace('&gt;', '>'))
+    // build svg sprite
+    .pipe(svgSprite({
+      mode: {
+        symbol: {
+					sprite: "../sprite.svg",
+        }
+      }
+    }))
     .pipe(dest(path.build.icons))
 }
 
