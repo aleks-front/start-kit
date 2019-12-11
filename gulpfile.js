@@ -1,5 +1,5 @@
 "use strict";
-const { src, dest, watch, series } = require('gulp');
+const { src, dest, watch, series, parallel } = require('gulp');
 
 // util
 const browserSync = require('browser-sync').create();
@@ -7,6 +7,15 @@ const rename = require('gulp-rename');
 const sourcemaps = require('gulp-sourcemaps');
 const rimraf = require('rimraf');
 const replace = require('gulp-replace');
+const plumber = require('gulp-plumber');
+
+// javascript
+const eslint = require('gulp-eslint');
+const concat = require('gulp-concat');
+const uglify = require('gulp-uglify');
+const babel = require('gulp-babel');
+const webpack = require('webpack');
+const gulpWebpack = require('webpack-stream');
 
 // style
 const sass = require('gulp-sass');
@@ -26,9 +35,6 @@ const cheerio = require('gulp-cheerio');
 // images
 const imagemin = require('gulp-imagemin');
 
-// javascript
-const eslint = require('gulp-eslint');
-
 // html
 const pug = require('gulp-pug');
 
@@ -38,7 +44,7 @@ var path = {
     html: './build',
     js: './build/js',
     style: './build/css',
-    img: './build/images',
+    images: './build/images',
     icons: './build/images/icons',
     fonts: './build/fonts',
     misc: './build/'
@@ -47,16 +53,16 @@ var path = {
     html: './src/*.pug',
     js: './src/common/js/main.js',
     style: './src/common/scss/main.scss',
-    img: './src/common/assets/images/**/*.*',
+    images: './src/common/assets/images/*.*',
     icons: './src/common/assets/icons/*.svg',
     fonts: './src/common/fonts/*.*',
     misc: './src/mics/*.*',
   },
   watch: {
     html: ['./src/*.pug', './src/components/**/*.pug', './src/components/**/**/*.pug'],
-    js: './src/common/js/main.js',
+    js: ['./src/common/js/*.js', './src/components/**/*.js', './src/components/**/**/*.js'],
     style: ['./src/common/scss/**/*.scss', './src/common/scss/*.scss', './src/components/**/*.scss', './src/components/**/**/*.scss'],
-    img: './src/common/assets/images/**/*.*',
+    images: './src/common/assets/images/*.*',
     icons: './src/common/assets/icons/*.svg',
     fonts: './src/common/fonts/*.*',
     misc: './src/mics/*.*',
@@ -80,24 +86,39 @@ function html() {
     .pipe(dest(path.build.html))
 }
 
+// Compile Javascript files into bulild main js
+function js() {
+  return src(path.src.js)
+    // .pipe(sourcemaps.init())
+    // .pipe(babel({
+    //   presets: ['@babel/env']
+    // }))
+    // .pipe(plumber())
+    // .pipe(concat('main.js'))
+    // .pipe(uglify())
+    // .pipe(rename({ suffix: ".min" }))
+    // .pipe(sourcemaps.write('.'))
+    .pipe(dest(path.build.js))
+}
+
 // Compile Scss files into Css
 function style() {
   return src(path.src.style)
     .pipe(sourcemaps.init())
     .pipe(sass({
-      pretty: true
-    }).on('error', function(err){
-      log.error(err.message);
+      pretty: true,
+      includePaths: './node_modules/'
     }))
+    .pipe(plumber())
     .pipe(postcss(postCssPlugins))
-    .pipe(rename('main.min.css'))
+    .pipe(rename({ suffix: ".min" }))
     .pipe(sourcemaps.write('.'))
     .pipe(dest(path.build.style))
 }
 
 // Copy ,and Optimize, images into build
 function images() {
-  return src(path.src.img)
+  return src(path.src.images)
     .pipe(
       imagemin([
         imagemin.gifsicle({ interlaced: true }),
@@ -113,9 +134,8 @@ function images() {
         })
       ])
     )
-    .pipe(dest(path.build.img))
+    .pipe(dest(path.build.images))
 }
-
 
 // Copy icons inot build
 function icons() {
@@ -168,10 +188,10 @@ function clean(cb) {
 // Serve and watch sass/pug files for changes
 function watchAndServe() {
   browserSync.init({
-    server: './build',
+    server: path.build.html,
   })
-
   watch(path.watch.html, html)
+  watch(path.watch.js, js)
   watch(path.watch.style, style)
   watch(path.watch.images, images)
   watch(path.watch.icons, icons)
@@ -181,6 +201,7 @@ function watchAndServe() {
 }
 
 exports.html = html;
+exports.js = js;
 exports.style = style;
 exports.fonts = fonts;
 exports.images = images;
@@ -189,5 +210,5 @@ exports.misc = misc;
 exports.clean = clean;
 exports.watch = watchAndServe;
 
-exports.default = series(html, style, images, icons, fonts, misc, watchAndServe);
-exports.build = series(clean, html, style, images, icons, fonts, misc);
+exports.default = series(parallel(html, style, js, images, icons, fonts, misc), watchAndServe);
+exports.build = series(clean, parallel(html, style, js, images, icons, fonts, misc));
