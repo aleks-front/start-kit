@@ -1,4 +1,5 @@
 "use strict";
+
 const { src, dest, watch, series, parallel } = require('gulp');
 
 // util
@@ -8,14 +9,12 @@ const sourcemaps = require('gulp-sourcemaps');
 const rimraf = require('rimraf');
 const replace = require('gulp-replace');
 const plumber = require('gulp-plumber');
+const size = require('gulp-size');
 
 // javascript
-const eslint = require('gulp-eslint');
-const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
-const babel = require('gulp-babel');
 const webpack = require('webpack');
-const gulpWebpack = require('webpack-stream');
+const webpackStream = require('webpack-stream');
 
 // style
 const sass = require('gulp-sass');
@@ -25,7 +24,6 @@ const postcss = require('gulp-postcss');
 const postcssInlineSvg = require('postcss-inline-svg');
 const postcssFlexbugsFixes = require('postcss-flexbugs-fixes');
 const postcssNormalize = require('postcss-normalize');
-
 
 // icons
 const svgmin = require('gulp-svgmin');
@@ -75,7 +73,7 @@ var postCssPlugins = [
   postcssFlexbugsFixes(),
   postcssInlineSvg(),
   postcssNormalize()
-]
+];
 
 // Compile pug files into HTML
 function html() {
@@ -83,22 +81,37 @@ function html() {
     .pipe(pug({
       pretty: true
     }))
-    .pipe(dest(path.build.html))
+    .pipe(size())
+    .pipe(dest(path.build.html));
 }
 
 // Compile Javascript files into bulild main js
 function js() {
   return src(path.src.js)
-    // .pipe(sourcemaps.init())
-    // .pipe(babel({
-    //   presets: ['@babel/env']
-    // }))
-    // .pipe(plumber())
-    // .pipe(concat('main.js'))
-    // .pipe(uglify())
-    // .pipe(rename({ suffix: ".min" }))
-    // .pipe(sourcemaps.write('.'))
-    .pipe(dest(path.build.js))
+  .pipe(webpackStream({
+      output: {
+        filename: 'main.js',
+      },
+      module: {
+        rules: [
+          {
+            test: /\.js$/,
+            loader: 'babel-loader',
+            query: {
+              presets: ['@babel/preset-env'],
+            },
+          }
+        ],
+      },
+      externals: {
+        jquery: 'jQuery'
+      }
+    }), webpack)
+    .pipe(plumber())
+    .pipe(uglify())
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(size())
+    .pipe(dest(path.build.js));
 }
 
 // Compile Scss files into Css
@@ -107,13 +120,14 @@ function style() {
     .pipe(sourcemaps.init())
     .pipe(sass({
       pretty: true,
-      includePaths: './node_modules/'
+      includePaths: ['./node_modules']
     }))
     .pipe(plumber())
     .pipe(postcss(postCssPlugins))
-    .pipe(rename({ suffix: ".min" }))
+    .pipe(rename({ suffix: '.min' }))
     .pipe(sourcemaps.write('.'))
-    .pipe(dest(path.build.style))
+    .pipe(size())
+    .pipe(dest(path.build.style));
 }
 
 // Copy ,and Optimize, images into build
@@ -134,7 +148,8 @@ function images() {
         })
       ])
     )
-    .pipe(dest(path.build.images))
+    .pipe(size())
+    .pipe(dest(path.build.images));
 }
 
 // Copy icons inot build
@@ -161,23 +176,26 @@ function icons() {
     .pipe(svgSprite({
       mode: {
         symbol: {
-					sprite: "../sprite.svg",
+					sprite: '../sprite.svg',
         }
       }
     }))
-    .pipe(dest(path.build.icons))
+    .pipe(size())
+    .pipe(dest(path.build.icons));
 }
 
 // Copy fonts files into fonts
 function fonts() {
   return src(path.src.fonts)
-    .pipe(dest(path.build.fonts))
+    .pipe(size())
+    .pipe(dest(path.build.fonts));
 }
 
 // Copy Misc files into build
 function misc() {
   return src(path.src.misc)
-    .pipe(dest(path.build.misc))
+    .pipe(size())
+    .pipe(dest(path.build.misc));
 }
 
 // Сlean build folder
@@ -189,15 +207,15 @@ function clean(cb) {
 function watchAndServe() {
   browserSync.init({
     server: path.build.html,
-  })
-  watch(path.watch.html, html)
-  watch(path.watch.js, js)
-  watch(path.watch.style, style)
-  watch(path.watch.images, images)
-  watch(path.watch.icons, icons)
-  watch(path.watch.fonts, fonts)
-  watch(path.watch.misc, misc)
-  watch(path.build.html).on('change', browserSync.reload)
+  });
+  watch(path.watch.html, html);
+  watch(path.watch.js, js);
+  watch(path.watch.style, style);
+  watch(path.watch.images, images);
+  watch(path.watch.icons, icons);
+  watch(path.watch.fonts, fonts);
+  watch(path.watch.misc, misc);
+  watch(path.build.html).on('change', browserSync.reload);
 }
 
 exports.html = html;
@@ -210,5 +228,5 @@ exports.misc = misc;
 exports.clean = clean;
 exports.watch = watchAndServe;
 
-exports.default = series(parallel(html, style, js, images, icons, fonts, misc), watchAndServe);
-exports.build = series(clean, parallel(html, style, js, images, icons, fonts, misc));
+exports.default = series(parallel(html, js, style, images, icons, fonts, misc), watchAndServe);
+exports.build = series(clean, parallel(html, js, style, images, icons, fonts, misc));
