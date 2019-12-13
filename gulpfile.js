@@ -41,7 +41,9 @@ var path = {
   build: {
     html: './build',
     js: './build/js',
+    separeteJs: './build/js',
     style: './build/css',
+    separeteStyle: './build/css',
     images: './build/images',
     icons: './build/images/icons',
     fonts: './build/fonts',
@@ -50,7 +52,9 @@ var path = {
   src: {
     html: './src/*.pug',
     js: './src/common/js/main.js',
+    separeteJs: './src/common/separete-js/*.*',
     style: './src/common/scss/main.scss',
+    separeteStyle: './src/common/separete-css/*.*',
     images: './src/common/assets/images/*.*',
     icons: './src/common/assets/icons/*.svg',
     fonts: './src/common/fonts/*.*',
@@ -59,7 +63,9 @@ var path = {
   watch: {
     html: ['./src/*.pug', './src/components/**/*.pug', './src/components/**/**/*.pug'],
     js: ['./src/common/js/*.js', './src/components/**/*.js', './src/components/**/**/*.js'],
+    separeteJs: './src/common/separete-js/*.*',
     style: ['./src/common/scss/**/*.scss', './src/common/scss/*.scss', './src/components/**/*.scss', './src/components/**/**/*.scss'],
+    separeteStyle: './src/common/separete-css/*.*',
     images: './src/common/assets/images/*.*',
     icons: './src/common/assets/icons/*.svg',
     fonts: './src/common/fonts/*.*',
@@ -114,6 +120,11 @@ function js() {
     .pipe(dest(path.build.js));
 }
 
+function separeteJs() {
+  return src(path.src.js)
+    .pipe(dest(path.build.js));
+}
+
 // Compile Scss files into Css
 function style() {
   return src(path.src.style)
@@ -129,6 +140,12 @@ function style() {
     .pipe(size())
     .pipe(dest(path.build.style));
 }
+
+function separeteCss() {
+  return src(path.src.js)
+    .pipe(dest(path.build.style));
+}
+
 
 // Copy ,and Optimize, images into build
 function images() {
